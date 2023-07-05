@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Threading.Tasks;
 using Serilog.Core;
 using Serilog.Events;
 using TelegramSink.TelegramBotClient;
@@ -34,7 +33,7 @@ namespace TelegramSink
 
             var loggedMessage = logEvent.RenderMessage(_formatProvider);
             
-            _telegramBot.SendMessage(loggedMessage);
+            Task.Run(() => _telegramBot.SendMessage(loggedMessage));
         }
     }
 }

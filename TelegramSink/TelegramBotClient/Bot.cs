@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Flurl;
-using Flurl.Http;
+﻿using System.Net.Http;
+using System.Net.Http.Json;
+using System.Threading.Tasks;
 using TelegramSink.TelegramBotClient.Domain;
+
 
 namespace TelegramSink.TelegramBotClient
 {
@@ -17,14 +16,20 @@ namespace TelegramSink.TelegramBotClient
             _botConfiguration = botConfiguration;
         }
 
-        public RestResult SendMessage(string message)
+        public async Task<RestResult> SendMessage(string message)
         {
-            var response = TelegramApiBaseUrl
-                .AppendPathSegment($"bot{_botConfiguration.ApiKey}/sendMessage")
-                .PostJsonAsync(new { chat_id=_botConfiguration.ChatId, text=message })
-                .ReceiveJson<RestResult>().Result;
-
-            return response;
+            using (HttpClient client = new HttpClient())
+            {
+                string apiUrl = $"{TelegramApiBaseUrl}/bot{_botConfiguration.ApiKey}/sendMessage";
+                var parameters = new
+                    {
+                        chat_id = _botConfiguration.ChatId,
+                        text = message
+                    };
+                var response = await client.PostAsJsonAsync(apiUrl, parameters);
+                var result = await response.Content.ReadFromJsonAsync<RestResult>();
+                return result;
+            }
         }
     }
 

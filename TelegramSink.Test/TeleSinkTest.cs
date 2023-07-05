@@ -1,11 +1,10 @@
-using System;
-using System.Collections.Generic;
 using System.IO;
 using Microsoft.Extensions.Configuration;
 using Xunit;
 using Serilog;
-using Serilog.Events;
 using TelegramSink.TelegramBotClient;
+using System;
+using System.Threading.Tasks;
 
 namespace TelegramSink.Test
 {
@@ -38,6 +37,7 @@ namespace TelegramSink.Test
             var botConfig = LoadConfiguration();
 			var log = new LoggerConfiguration().MinimumLevel.Information().WriteTo.TeleSink(telegramApiKey: botConfig.ApiKey, telegramChatId: botConfig.ChatId).CreateLogger();
             log.Information("Hello World!");
+            Task.Delay(1000).Wait();
 		}
     }
 }
